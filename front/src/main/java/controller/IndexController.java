@@ -3,6 +3,7 @@ package controller;
 import fr.Client;
 import fr.IClientService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.access.annotation.Secured;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
@@ -18,7 +19,7 @@ public class IndexController {
     @Autowired
     private IClientService clientService;
 
-    @RequestMapping(path = "/", method = RequestMethod.GET)
+    @RequestMapping(path = {"/","index"}, method = RequestMethod.GET)
     public ModelAndView index(){
         ModelAndView model = new ModelAndView("index");
         model.addObject("message","Hello from full statck test application");
@@ -26,11 +27,19 @@ public class IndexController {
     }
 
 
-    @RequestMapping(method = RequestMethod.GET, path = "/log")
-    public ModelAndView log(@RequestParam String login){
+    @RequestMapping(method = RequestMethod.GET, path = "/private/client")
+    public ModelAndView clientPrivate(){
         ModelAndView model = new ModelAndView("client");
-        Client client = clientService.getClient(login);
-        model.addObject("client",client);
+        model.addObject("message","via private client");
+
+        return model;
+    }
+
+    @Secured("ROLE_ADMIN")
+    @RequestMapping(method = RequestMethod.GET, path = "/private/admin")
+    public ModelAndView adminPrivate(){
+        ModelAndView model = new ModelAndView("admin");
+        model.addObject("message","via private admin");
 
         return model;
     }

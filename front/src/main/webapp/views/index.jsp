@@ -13,9 +13,13 @@
 <body>
     Message : ${message}
 
-    <form action="/log" method="get">
+    <form action="/authenticate" method="post">
         <label>Login</label>
-        <input type="text" name="login" />
+        <input type="text" name="username" />
+        <br />
+        <label>Password</label>
+        <input type="text" name="password" />
+        <br />
         <button type="submit" value="ok">OK</button>
     </form>
 
