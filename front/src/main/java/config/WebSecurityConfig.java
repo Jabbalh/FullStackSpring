@@ -24,7 +24,7 @@ import org.springframework.web.servlet.config.annotation.WebMvcConfigurerAdapter
 @Configuration
 @EnableWebSecurity
 @EnableGlobalMethodSecurity(securedEnabled = true) //prePostEnabled = true
-class WebSecurityConfig extends WebSecurityConfigurerAdapter {
+public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
 
     public static String USER_NAME = "toto";
     public static String USER_NAME_ADMIN = "admin";
@@ -32,51 +32,52 @@ class WebSecurityConfig extends WebSecurityConfigurerAdapter {
 
     @Override
     protected void configure(HttpSecurity http) throws Exception {
-        System.out.println("configure -> http");
-
+        // Active ou déscative le csrl (si désactivé, plus besoin du champ hidden correspond dans la page de login
         //http.csrf().disable();
+
         http.authorizeRequests().antMatchers("/","index", "/fail", "fail2").permitAll()
-                //.antMatchers("/private/admin/**").hasRole("ADMIN")
-                .antMatchers("/private/**").fullyAuthenticated()
+                //.antMatchers("/private/admin/**").hasRole("ADMIN") // Si on souhaites restraindre l'URL pour le role ADMIN
+                .antMatchers("/private/**").fullyAuthenticated()    // l'accès aux URLs private/** sera restrainte à un utilisateur authentifié
                 .and()
-                .formLogin()
-                .loginPage( "/login" )
-                .loginProcessingUrl( "/login.do" )
-                .defaultSuccessUrl( "/" )
+                .formLogin()                        // utilisation du mode FormLogin pour l'authentification
+                .loginPage( "/login" )              // Définition d'une page custom pour le login (si non présent authomatiquement généré)
+                .loginProcessingUrl( "/login.do" )  // Url à utiliser pour poster l'authenfication, donc l'action dans la page custom de login
+                .defaultSuccessUrl( "/" )           // Url par défaut à utiliser en cas d'authentification réussie
                 .failureUrl( "/login?err=1" )
-                .usernameParameter( "username" )
-                .passwordParameter( "password" )
+                .usernameParameter( "username" )    // Nom du champs pour le username dans la page de login
+                .passwordParameter( "password" )    // Nom du champs pour le mot de passe dans la page de login
                 .and()
                 .exceptionHandling()
                 .accessDeniedPage( "/403" )
                 .and()
-                // This is where the logout page and process is configured. The logout-url is the URL to send
-                // the user to in order to logout, the logout-success-url is where they are taken if the logout
-                // is successful, and the delete-cookies and invalidate-session make sure that we clean up after logout
+                // Configuration du logout
                 .logout()
-                .logoutRequestMatcher( new AntPathRequestMatcher( "/logout" ) )
-                .logoutSuccessUrl( "/login?out=1" )
-                .deleteCookies( "JSESSIONID" )
-                .invalidateHttpSession( true )
+                .logoutRequestMatcher( new AntPathRequestMatcher( "/logout" ) ) // URL à appeler pour se délogguer
+                .logoutSuccessUrl( "/" )                                        // URL vers laquelle renvoyer lorsqu'on s'est bien déloggué
+                .deleteCookies( "JSESSIONID" )                                  // COOKIE à supprimer
+                .invalidateHttpSession( true )                                  // Invalider la session HTTP
                 .and()
-
                 // The session management is used to ensure the user only has one session. This isn't
                 // compulsory but can add some extra security to your application.
                 .sessionManagement()
-                .invalidSessionUrl( "/login?time=1" )
+                .invalidSessionUrl( "/" )
                 .maximumSessions( 1 );
     }
 
+    /**
+     * Service d'authentification
+     */
     @Autowired
     private AuthClientService authClientService;
 
+    /**
+     * Surcharge de la configuration
+     * @param auth
+     * @throws Exception
+     */
     @Autowired
     public void configureGlobal( AuthenticationManagerBuilder auth ) throws Exception
     {
-        System.out.println("configure -> auth");
-
-        //auth.authenticationProvider(this.customAuthProvider);
-
         auth.userDetailsService(authClientService).passwordEncoder(new BCryptPasswordEncoder());
 
     }

@@ -1,27 +1,17 @@
-<%--
-  Created by IntelliJ IDEA.
-  User: Nico
-  Date: 09/02/2016
-  Time: 23:18
-  To change this template use File | Settings | File Templates.
---%>
 <%@ page contentType="text/html;charset=UTF-8" language="java" %>
-<html>
-<head>
-    <title>Full statck test</title>
-</head>
+<%@ taglib prefix="spring" uri="http://www.springframework.org/tags"%>
+<%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core"%>
+<!DOCTYPE html>
+<html lang="en">
+
 <body>
-    Message : ${message}
-
-    <form action="/authenticate" method="post">
-        <label>Login</label>
-        <input type="text" name="username" />
-        <br />
-        <label>Password</label>
-        <input type="text" name="password" />
-        <br />
-        <button type="submit" value="ok">OK</button>
-    </form>
-
+	<h1>Demo Spring sécurity</h1>
+	<br />
+	Message: ${message}
+    <br />
+	<a href="/logout">Déconnexion</a><br />
+	<a href="/private/client">Vers une page pour utilisateur authentifié sans rôle particulier</a><br />
+	<a href="/private/admin">Vers une page pour utilisateur authentifié ayant le rôle ROLE_ADMIN</a>
 </body>
+
 </html>

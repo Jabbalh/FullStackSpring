@@ -1,12 +1,11 @@
 package fr.auth;
 
 import fr.User;
-import fr.UserRepository;
+import fr.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
-import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Component;
 
 
@@ -17,14 +16,12 @@ import org.springframework.stereotype.Component;
 public class AuthClientService implements UserDetailsService {
 
     @Autowired
-    private UserRepository userDao;
+    private UserService userService;
 
     @Override
     public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
 
-        User user = userDao.findByLogin(username);
-        System.out.println("nhuet -> " + new BCryptPasswordEncoder().encode("nhuet"));
-        System.out.println("gtasset -> " + new BCryptPasswordEncoder().encode("gtasset"));
+        User user = userService.findByLogin(username);
         if (user != null) return user;
 
         throw new UsernameNotFoundException("Username not found");
