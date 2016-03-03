@@ -1,5 +1,7 @@
 package config;
 
+import org.springframework.boot.Banner;
+import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.EnableAutoConfiguration;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.boot.builder.SpringApplicationBuilder;
@@ -20,10 +22,9 @@ import org.springframework.security.config.annotation.web.configuration.EnableWe
 @Import(value = {WebSecurityConfig.class, WebMvcConfig.class})
 public class ApplicationConfig extends SpringBootServletInitializer {
 
-
-
     @Override
     protected SpringApplicationBuilder configure(SpringApplicationBuilder application) {
+        application.bannerMode(Banner.Mode.OFF);
         return application.sources(ApplicationConfig.class);
     }
 }

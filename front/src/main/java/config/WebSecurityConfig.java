@@ -36,7 +36,7 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
         //http.csrf().disable();
 
         http.authorizeRequests().antMatchers("/","index", "/fail", "fail2").permitAll()
-                //.antMatchers("/private/admin/**").hasRole("ADMIN") // Si on souhaites restraindre l'URL pour le role ADMIN
+                //.antMatchers("/private/admin/**").hasRole("ROLE_ADMIN") // Si on souhaites restraindre l'URL pour le role ADMIN
                 .antMatchers("/private/**").fullyAuthenticated()    // l'accès aux URLs private/** sera restrainte à un utilisateur authentifié
                 .and()
                 .formLogin()                        // utilisation du mode FormLogin pour l'authentification

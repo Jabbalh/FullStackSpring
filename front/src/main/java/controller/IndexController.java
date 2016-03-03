@@ -2,6 +2,7 @@ package controller;
 
 import excep.MyException;
 import fr.User;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpStatus;
 import org.springframework.security.access.annotation.Secured;
@@ -9,8 +10,10 @@ import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.client.RestTemplate;
 import org.springframework.web.servlet.ModelAndView;
 
+import java.security.Principal;
 import java.util.Map;
 
 /**
@@ -19,8 +22,17 @@ import java.util.Map;
 @Controller
 public class IndexController {
 
+    @Autowired
+    private ModelUser modelUser;
+
     @Value("${application.message:Hello World}")
     private String message = "Hello World";
+
+    public String test(){
+            RestTemplate rest = new RestTemplate();
+            return "";
+    }
+
 
     @RequestMapping({"/","/index"})
     public String welcome(Map<String, Object> model) {
@@ -39,6 +51,7 @@ public class IndexController {
     @RequestMapping("/private/client")
     public String dash(Map<String, Object> model) {
         model.put("message", "Vous êtes sur une page privée sans rôle");
+        model.put("modelUser", modelUser);
         return "client";
     }
 
@@ -49,6 +62,25 @@ public class IndexController {
         ModelAndView model = new ModelAndView("admin");
         model.addObject("message", "Vous êtes sur une page privée avec le rôle ROLE_ADMIN");
         return model;
+    }
+
+    // for 403 access denied page
+    @RequestMapping(value = "/403", method = RequestMethod.GET)
+    public ModelAndView accesssDenied(Principal user) {
+
+        ModelAndView model = new ModelAndView();
+
+        if (user != null) {
+            model.addObject("msg", "Hi " + user.getName()
+                    + ", you do not have permission to access this page!");
+        } else {
+            model.addObject("msg",
+                    "You do not have permission to access this page!");
+        }
+
+        model.setViewName("403");
+        return model;
+
     }
 
     @RequestMapping("/fail")
